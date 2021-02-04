@@ -66,7 +66,7 @@ class ExerciseSession:
                 msg += f"**{i}.** {name} : {percent}%\n"
             else:
                 msg += f"**{i}.** {name} : "
-                msg += ", ".join([f"<@{s.id}>" for s in self.exos[i]])
+                msg += ", ".join([f"{s.name}>" for s in self.exos[i]])
                 msg += "\n"
         return msg
 
@@ -403,6 +403,7 @@ bot.remove_command("help")
 
 
 @bot.command()
+@remove_invoke
 async def help(ctx):
     msg = f"Les commandes de {bot.user} sont :\n"
     msg += "  `$register` : Vous enregistre dans la session d'exercices courante sur le salon\n"
@@ -420,7 +421,10 @@ async def help(ctx):
         msg += "                                         et de l'afficher dans le salon (`for_all`) ou en privé (par défaut)\n"
     else:
         msg += "  `$progress` : affiche la progression globale\n"
-    await ctx.send(msg)
+    if ctx.author.dm_channel is None:
+        await ctx.author.create_dm()
+    await ctx.author.dm_channel.send(msg)
+
 
 
 import private
